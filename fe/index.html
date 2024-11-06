@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Client Example</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.0/dist/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js" integrity="sha512-iKDtgDyTHjAitUDdLljGhenhPwrbBfqTKWO1mkhSFH3A7blITC9MhYon6SjnMhp4o0rADGw9yAC6EW4t5a4K3g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body>
+
+    <h1>WebSocket Client Example</h1>
+    <div id="notification"></div>
+
+    <div id="notifications"></div>
+
+    <script>
+        // Kết nối đến WebSocket server
+        var socket = new SockJS('http://localhost:8090/ws/endpoint');
+        var stompClient = Stomp.over(socket);
+
+        // Kết nối STOMP
+        stompClient.connect({}, function (frame) {
+            console.log('Connected: ' + frame);
+
+            // Subscribe vào topic /topic/notifications
+            stompClient.subscribe('/topic/notification_ec', function (message) {
+                showNotification(message.body);
+                console.log("message body : " + message.body);
+            });
+        });
+
+        // Hàm hiển thị thông báo
+        function showNotification(message) {
+            var notificationsDiv = document.getElementById("notifications");
+            notificationsDiv.innerHTML = '<p>' + message + '</p>';
+        }
+    </script>
+</body>
+</html>
